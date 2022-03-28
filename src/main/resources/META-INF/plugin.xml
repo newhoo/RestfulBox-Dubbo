@@ -1,0 +1,50 @@
+<idea-plugin>
+    <id>io.github.newhoo.restkit.ext.dubbo</id>
+    <name>RESTKit-Dubbo</name>
+    <!--  <version>2.0.5</version>-->
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RESTKit</vendor>
+
+    <description><![CDATA[
+    <h1><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RESTKit</a> EXTENSION</h1>
+
+    Support Dubbo for RESTKit plugin from version 2.0.3.
+    <br/>
+    After installed this plugin, you should enable it in RESTKit plugin setting.
+    <br/>
+
+    View more: <a href="https://www.yuque.com/docs/share/cc2630c5-97c9-4910-95ec-e9d00fa4bd1c">document</a>
+    <br/>
+
+    <img src="https://s2.loli.net/2022/03/24/GiAxra8ZP7D3tQB.png"/>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        1.0.0
+        <ul>
+            <li>support Dubbo services with RESTKit plugin</li>
+            <br/>
+            <li>通过RESTKit插件来提供对Dubbo的支持</li>
+        </ul>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="212.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html on how to target different products -->
+    <!-- uncomment to enable plugin in all products -->
+    <depends>com.intellij.modules.java</depends>
+    <depends>io.github.newhoo.restkit</depends>
+
+    <extensions defaultExtensionNs="io.github.newhoo.restkit">
+        <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
+        <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
+    </extensions>
+
+    <actions>
+        <action id="RESTKit.DubboAction" class="io.github.newhoo.restkit.ext.dubbo.DubboAction"
+                text="Jump to Restful Service Tree" description="Jump to restful service tree">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
