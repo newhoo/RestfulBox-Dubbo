@@ -17,7 +17,6 @@ import io.github.newhoo.restkit.common.HttpMethod;
 import io.github.newhoo.restkit.common.KV;
 import io.github.newhoo.restkit.common.PsiRestItem;
 import io.github.newhoo.restkit.common.RestItem;
-import io.github.newhoo.restkit.feature.javaimpl.helper.PsiClassHelper;
 import io.github.newhoo.restkit.restful.BaseRequestResolver;
 import io.github.newhoo.restkit.restful.ParamResolver;
 import io.github.newhoo.restkit.restful.RequestResolver;
@@ -66,14 +65,14 @@ public class DubboResolver extends BaseRequestResolver {
 
             if (psiElement instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) psiElement;
-                List<RestItem> serviceItemList = getRequestItemList(psiClass);
+                List<RestItem> serviceItemList = getRequestItemList(psiClass, module);
                 itemList.addAll(serviceItemList);
             }
         }
         return itemList;
     }
 
-    private List<RestItem> getRequestItemList(PsiClass psiClass) {
+    private List<RestItem> getRequestItemList(PsiClass psiClass, Module module) {
         List<RestItem> itemList = new ArrayList<>();
         PsiClass superClass = null;
         for (PsiClass aSuper : psiClass.getSupers()) {
@@ -91,14 +90,15 @@ public class DubboResolver extends BaseRequestResolver {
                     || psiMethod.findSuperMethods(superClass).length == 0) {
                 continue;
             }
-            PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), superClass.getQualifiedName(), "Dubbo", psiMethod, paramResolver);
+            PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), module.getName(), getFrameworkName(), psiMethod, paramResolver);
             item.setProtocol("dubbo");
+            item.setPackageName(superClass.getQualifiedName());
             itemList.add(item);
         }
         return itemList;
     }
 
-    ParamResolver paramResolver = new ParamResolver() {
+    public static final ParamResolver paramResolver = new ParamResolver() {
         @NotNull
         @Override
         public List<KV> buildHeaders(@NotNull PsiElement psiElement) {
@@ -131,14 +131,14 @@ public class DubboResolver extends BaseRequestResolver {
 
             Map<String, Object> map = new LinkedHashMap<>();
             List<String> parameterTypes = Arrays.stream(psiMethod.getParameterList().getParameters())
-                    .map(o -> o.getType().getCanonicalText())
-                    .collect(Collectors.toList());
+                                                .map(o -> o.getType().getCanonicalText())
+                                                .collect(Collectors.toList());
             List<Object> parameterValues = parameterTypes.stream()
-                    .map(o -> PsiClassHelper.assemblePsiClass(o, psiMethod.getProject(), 0, true))
-                    .collect(Collectors.toList());
+                                                         .map(o -> PsiClassHelper.assemblePsiClass(o, psiMethod.getProject(), 0, true))
+                                                         .collect(Collectors.toList());
             parameterTypes = parameterTypes.stream()
-                    .map(type -> type.contains("<") ? type.substring(0, type.indexOf("<")) : type)
-                    .collect(Collectors.toList());
+                                           .map(type -> type.contains("<") ? type.substring(0, type.indexOf("<")) : type)
+                                           .collect(Collectors.toList());
             PsiClass containingClass = psiMethod.getContainingClass();
             PsiAnnotation annotation = containingClass.getAnnotation("com.alibaba.dubbo.config.annotation.Service");
             if (annotation == null) {
@@ -177,10 +177,10 @@ public class DubboResolver extends BaseRequestResolver {
                     String location;
                     if (superMethod.getDocComment() != null) {
                         restName = Arrays.stream(superMethod.getDocComment().getDescriptionElements())
-                                .filter(e -> e instanceof PsiDocToken)
-                                .filter(e -> StringUtils.isNotBlank(e.getText()))
-                                .findFirst()
-                                .map(e -> e.getText().trim()).orElse(null);
+                                         .filter(e -> e instanceof PsiDocToken)
+                                         .filter(e -> StringUtils.isNotBlank(e.getText()))
+                                         .findFirst()
+                                         .map(e -> e.getText().trim()).orElse(null);
                     }
                     location = superMethod.getContainingClass().getName().concat("#").concat(superMethod.getName());
                     if (StringUtils.isNotEmpty(restName)) {

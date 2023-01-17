@@ -1,20 +1,22 @@
 plugins {
-    id 'java'
-    id 'org.jetbrains.intellij' version '0.4.10'
+    id("java")
+    id('org.jetbrains.intellij') version '1.10.0'
 }
 
 group 'io.github.newhoo.restkit.ext'
-version '1.0.0'
+version '1.0.1'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
+//    compileOnly fileTree(dir: 'libs', includes: ['*jar'])
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation("com.alibaba:dubbo:2.6.12") {
         exclude group: 'org.springframework'
@@ -29,10 +31,21 @@ dependencies {
 }
 
 intellij {
-    version '2021.2'
-    pluginName 'RESTKit-Dubbo'
-    updateSinceUntilBuild false
-    downloadSources = true
-    plugins = ['java', 'io.github.newhoo.restkit:2.0.3']
-    sandboxDirectory = "${rootProject.rootDir}/idea-sandbox"
+    pluginName.set('RestfulBox-Dubbo')
+    version.set('2021.2')
+    updateSinceUntilBuild.set(false)
+    downloadSources.set(true)
+    plugins.set(['java', 'io.github.newhoo.restkit:3.0.0'])
+    sandboxDir.set("${rootProject.rootDir}/idea-sandbox")
+}
+
+tasks {
+
+    verifyPluginConfiguration {
+        enabled = false
+    }
+
+    buildSearchableOptions {
+        enabled = false
+    }
 }

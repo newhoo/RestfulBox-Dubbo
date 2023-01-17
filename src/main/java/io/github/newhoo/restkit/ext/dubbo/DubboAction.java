@@ -7,7 +7,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
-import io.github.newhoo.restkit.toolwindow.RestToolWindowFactory;
+import io.github.newhoo.restkit.toolwindow.ToolWindowHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,8 +42,6 @@ public class DubboAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         PsiElement psiElement = e.getRequiredData(CommonDataKeys.PSI_ELEMENT);
-        RestToolWindowFactory.getRestServiceToolWindow(e.getProject(), restServiceToolWindow -> {
-            restServiceToolWindow.navigateToTree(psiElement);
-        });
+        ToolWindowHelper.navigateToTree(psiElement, null);
     }
 }

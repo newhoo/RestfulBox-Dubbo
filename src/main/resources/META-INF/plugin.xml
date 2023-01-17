@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>io.github.newhoo.restkit.ext.dubbo</id>
-    <name>RESTKit-Dubbo</name>
+    <name>RestfulBox-Dubbo</name>
     <!--  <version>2.0.5</version>-->
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RESTKit</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RestfulBox</vendor>
 
     <description><![CDATA[
     <h1><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RESTKit</a> EXTENSION</h1>
@@ -19,6 +19,17 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.1
+        <ul>
+            <li>Add icon for Dubbo methods. Enable [Jump to tree using method line marker] in the setting.</li>
+            <li>Remove jump to tree from context menu.</li>
+            <li>Support RestfulBox 3.0.</li>
+            <br/>
+            <li>添加图标，支持Dubbo方法快速生成请求，在设置中启用【Jump to tree using method line marker】</li>
+            <li>移除右键菜单中的跳转到树窗口</li>
+            <li>支持RestfulBox 3.0.</li>
+        </ul>
+
         1.0.0
         <ul>
             <li>support Dubbo services with RESTKit plugin</li>
@@ -36,15 +47,20 @@
     <depends>com.intellij.modules.java</depends>
     <depends>io.github.newhoo.restkit</depends>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <codeInsight.lineMarkerProvider language="" implementationClass="io.github.newhoo.restkit.ext.dubbo.ServiceLineMarkerProvider"/>
+    </extensions>
+
     <extensions defaultExtensionNs="io.github.newhoo.restkit">
         <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
         <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
     </extensions>
 
-    <actions>
-        <action id="RESTKit.DubboAction" class="io.github.newhoo.restkit.ext.dubbo.DubboAction"
-                text="Jump to Restful Service Tree" description="Jump to restful service tree">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
-    </actions>
+<!--    <actions>-->
+<!--        <action id="RESTKit.DubboAction" class="io.github.newhoo.restkit.ext.dubbo.DubboAction"-->
+<!--                text="Jump to Restful Service Tree" description="Jump to restful service tree">-->
+<!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
+<!--        </action>-->
+<!--    </actions>-->
 </idea-plugin>
