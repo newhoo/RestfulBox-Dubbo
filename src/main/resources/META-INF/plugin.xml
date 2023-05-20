@@ -5,20 +5,26 @@
     <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RestfulBox</vendor>
 
     <description><![CDATA[
-    <h1><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RESTKit</a> EXTENSION</h1>
+    <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> EXTENSION</h2>
 
-    Support Dubbo for RESTKit plugin from version 2.0.3.
+    Support Dubbo api scanning and request for RestfulBox plugin from version 2.0.3.
     <br/>
-    After installed this plugin, you should enable it in RESTKit plugin setting.
+    After installed this plugin, you should enable it in RestfulBox plugin setting.
     <br/>
 
-    View more: <a href="https://www.yuque.com/docs/share/cc2630c5-97c9-4910-95ec-e9d00fa4bd1c">document</a>
+    View more: <a href="https://github.com/newhoo/RESTKit-Dubbo">github</a>
     <br/>
 
     <img src="https://s2.loli.net/2022/03/24/GiAxra8ZP7D3tQB.png"/>
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.2
+        <ul>
+            <li>Support DubboService annotation.</li>
+            <li>支持 DubboService 注解扫描</li>
+        </ul>
+
         1.0.1
         <ul>
             <li>Add icon for Dubbo methods. Enable [Jump to tree using method line marker] in the setting.</li>
@@ -33,7 +39,6 @@
         1.0.0
         <ul>
             <li>support Dubbo services with RESTKit plugin</li>
-            <br/>
             <li>通过RESTKit插件来提供对Dubbo的支持</li>
         </ul>
     ]]>
@@ -55,6 +60,7 @@
     <extensions defaultExtensionNs="io.github.newhoo.restkit">
         <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
         <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
+        <restItemDetail implementation="io.github.newhoo.restkit.ext.dubbo.DubboRestItemDetail$DubboRestItemDetailProvider"/>
     </extensions>
 
 <!--    <actions>-->

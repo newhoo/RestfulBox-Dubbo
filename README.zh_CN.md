@@ -1,14 +1,14 @@
-# RESTKit-Dubbo
+# RestfulBox-Dubbo
 
-[RESTKit-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) 是一个依赖于[RESTKit](https://plugins.jetbrains.com/plugin/14723-restkit) 插件的插件，用于为`RESTKit`(2.0.0开始) 提供Dubbo支持。
+[RestfulBox-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) 是一个依赖于[RestfulBox](https://plugins.jetbrains.com/plugin/14723-restkit) 插件的插件，用于为`RestfulBox`(2.0.0开始) 提供Dubbo支持。
 
 > 注意  
-> RESTKit从2.0.0开始提供了扩展点，如同本插件，你也能为RESTKit提供自己所需的接口扫描方式。
+> RestfulBox 从2.0.0开始提供了扩展点，如同本插件，你也能为 RestfulBox 提供自己所需的接口扫描方式。
 
 如果你觉得本插件不错，请给个🌟Star吧，同时也欢迎提供宝贵的建议。
 
 ## 功能
-- 支持RESTKit的绝大多数功能。
+- 支持RestfulBox的绝大多数功能。
 - 支持扫描Java项目中的dubbo服务。
 - 支持发送dubbo请求。
 - 支持在dubbo服务实现方法上跳转到service tree窗口。
@@ -16,14 +16,14 @@
 ## 安装
 - **插件市场安装**
 
-推荐 <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>输入"RESTKit-Dubbo"</kbd> > <kbd>点击Install</kbd>
+推荐 <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>输入"RestfulBox-Dubbo"</kbd> > <kbd>点击Install</kbd>
 
 - **本地安装**
 
 从仓库下载<kbd>distributions/RESTKit-Dubbo-x.x.x.zip</kbd>, 然后在本地Idea安装 <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Install Plugin from Disk...</kbd>
 
 ## 使用
-安装完成后，在`RESTKit`插件设置中启用，然后在`RESTKit`窗口刷新项目接口。
+安装完成后，在`RestfulBox`插件设置中启用，然后在`RestfulBox`窗口刷新项目接口。
 
 ![enable](./.images/setting.png)
 

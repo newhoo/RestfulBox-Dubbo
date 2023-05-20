@@ -55,9 +55,15 @@ public class DubboResolver extends BaseRequestResolver {
     public List<RestItem> findRestItemListInModule(Module module, GlobalSearchScope globalSearchScope) {
         List<RestItem> itemList = new ArrayList<>();
         Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get("Service", module.getProject(), globalSearchScope);
+        Collection<PsiAnnotation> psiAnnotations2 = JavaAnnotationIndex.getInstance().get("DubboService", module.getProject(), globalSearchScope);
+        if (!psiAnnotations2.isEmpty()) {
+            psiAnnotations.addAll(psiAnnotations2);
+        }
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
             if (!"com.alibaba.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
-                    && !"org.apache.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())) {
+                    && !"org.apache.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
+                    && !"org.apache.dubbo.config.annotation.DubboService".equals(psiAnnotation.getQualifiedName())
+            ) {
                 continue;
             }
             PsiModifierList psiModifierList = (PsiModifierList) psiAnnotation.getParent();
@@ -143,6 +149,9 @@ public class DubboResolver extends BaseRequestResolver {
             PsiAnnotation annotation = containingClass.getAnnotation("com.alibaba.dubbo.config.annotation.Service");
             if (annotation == null) {
                 annotation = containingClass.getAnnotation("org.apache.dubbo.config.annotation.Service");
+            }
+            if (annotation == null) {
+                annotation = containingClass.getAnnotation("org.apache.dubbo.config.annotation.DubboService");
             }
             map.put("interface", superClass.getQualifiedName());
             map.put("method", psiMethod.getName());

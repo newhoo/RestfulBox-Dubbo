@@ -33,6 +33,7 @@ public class ServiceLineMarkerProvider implements LineMarkerProvider {
             boolean flag = containingClass != null && (
                     containingClass.hasAnnotation("com.alibaba.dubbo.config.annotation.Service")
                             || containingClass.hasAnnotation("org.apache.dubbo.config.annotation.Service")
+                            || containingClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
             );
             if (flag) {
                 return new LineMarkerInfo<>(element, element.getTextRange(), ConfigHelper.NAVIGATE_ICON,
@@ -44,7 +45,7 @@ public class ServiceLineMarkerProvider implements LineMarkerProvider {
                                                     return item;
                                                 });
                                             },
-                                            GutterIconRenderer.Alignment.LEFT, () -> "RESTKit-Dubbo");
+                                            GutterIconRenderer.Alignment.LEFT, () -> "RestfulBox-Dubbo");
             }
         }
         return null;

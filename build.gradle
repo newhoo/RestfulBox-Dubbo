@@ -1,12 +1,14 @@
 plugins {
     id("java")
-    id('org.jetbrains.intellij') version '1.10.0'
+    id('org.jetbrains.intellij') version '1.10.1'
 }
 
 group 'io.github.newhoo.restkit.ext'
-version '1.0.1'
+version '1.0.2'
 
-sourceCompatibility = 11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public/' }
@@ -15,9 +17,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.18.22'
 //    compileOnly fileTree(dir: 'libs', includes: ['*jar'])
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation("com.alibaba:dubbo:2.6.12") {
         exclude group: 'org.springframework'
     }
@@ -28,11 +28,14 @@ dependencies {
     implementation('com.alibaba:fastjson:1.1.48.android') {
         exclude module: 'gson'
     }
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 intellij {
     pluginName.set('RestfulBox-Dubbo')
-    version.set('2021.2')
+    version.set('2022.3')
+    type.set("IU")
     updateSinceUntilBuild.set(false)
     downloadSources.set(true)
     plugins.set(['java', 'io.github.newhoo.restkit:3.0.0'])

@@ -1,17 +1,17 @@
-# RESTKit-Dubbo
+# RestfulBox-Dubbo
 
 [简体中文](./README.zh_CN.md)
 
-[RESTKit-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) is a plugin that support Dubbo scanning and request for [RESTKit](https://plugins.jetbrains.com/plugin/14723-restkit) plugin from version 2.0.0.
+[RestfulBox-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) is a plugin that support Dubbo scanning and request for [RestfulBox](https://plugins.jetbrains.com/plugin/14723-restkit) plugin from version 2.0.0.
 
 
 > Note  
-> RESTKit plugin has provided extension point from version 2.0.0. You can also support your web framework restful apis like this plugin.
+> RestfulBox plugin has provided extension point from version 2.0.0. You can also support your web framework restful apis like this plugin.
 
 If this plugin helps, please **🌟Star**! If you have any good idea, please let me know.
 
 ## Features
-- Support most RESTKit features.
+- Support most RestfulBox features.
 - Support scanning dubbo services in java project.
 - Support sending dubbo request.
 - Support jumping to tree in the dubbo method from service impl.
@@ -19,14 +19,14 @@ If this plugin helps, please **🌟Star**! If you have any good idea, please let
 ## Install
 - **Using IDE plugin system**
 
-Recommended <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>find "RESTKit-Dubbo"</kbd> > <kbd>Install Plugin</kbd>
+Recommended <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>find "RestfulBox-Dubbo"</kbd> > <kbd>Install Plugin</kbd>
 
 - **Local Install**
 
 Download plugin form <kbd>distributions/RESTKit-Dubbo-x.x.x.zip</kbd>, then <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Install Plugin from Disk...</kbd>
 
 ## Usage
-After installed this plugin, you should enable it in `RESTKit` setting. Refresh in `RESTKit` window.
+After installed this plugin, you should enable it in `RestfulBox` setting. Refresh in `RestfulBox` window.
 
 ![enable](./.images/setting.png)
 

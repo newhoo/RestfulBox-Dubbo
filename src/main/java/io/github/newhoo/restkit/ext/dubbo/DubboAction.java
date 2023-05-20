@@ -32,6 +32,7 @@ public class DubboAction extends AnAction {
             boolean flag = containingClass != null && (
                     containingClass.hasAnnotation("com.alibaba.dubbo.config.annotation.Service")
                             || containingClass.hasAnnotation("org.apache.dubbo.config.annotation.Service")
+                            || containingClass.hasAnnotation("org.apache.dubbo.config.annotation.DubboService")
             );
             e.getPresentation().setEnabledAndVisible(flag);
             return;
