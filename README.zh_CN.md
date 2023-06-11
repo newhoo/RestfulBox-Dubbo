@@ -1,11 +1,6 @@
 # RestfulBox-Dubbo
 
-[RestfulBox-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) 是一个依赖于[RestfulBox](https://plugins.jetbrains.com/plugin/14723-restkit) 插件的插件，用于为`RestfulBox`(2.0.0开始) 提供Dubbo支持。
-
-> 注意  
-> RestfulBox 从2.0.0开始提供了扩展点，如同本插件，你也能为 RestfulBox 提供自己所需的接口扫描方式。
-
-如果你觉得本插件不错，请给个🌟Star吧，同时也欢迎提供宝贵的建议。
+本插件是[RestfulBox](https://plugins.jetbrains.com/plugin/14723-restfulbox) 的辅助插件，用于通过`RestfulBox`提供Dubbo接口的支持，功能比较完善。如果提升了你的开发效率，不妨一赞，同时也欢迎提供宝贵的建议。
 
 ## 功能
 - 支持RestfulBox的绝大多数功能。

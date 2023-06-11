@@ -2,11 +2,7 @@
 
 [简体中文](./README.zh_CN.md)
 
-[RestfulBox-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) is a plugin that support Dubbo scanning and request for [RestfulBox](https://plugins.jetbrains.com/plugin/14723-restkit) plugin from version 2.0.0.
-
-
-> Note  
-> RestfulBox plugin has provided extension point from version 2.0.0. You can also support your web framework restful apis like this plugin.
+[RestfulBox-Dubbo](https://plugins.jetbrains.com/plugin/18828-restkit-dubbo) is a plugin that support Dubbo scanning and request for [RestfulBox](https://plugins.jetbrains.com/plugin/14723-restfulbox) plugin from version 2.0.0.
 
 If this plugin helps, please **🌟Star**! If you have any good idea, please let me know.
 

@@ -5,7 +5,7 @@
     <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RestfulBox</vendor>
 
     <description><![CDATA[
-    <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> EXTENSION</h2>
+    <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> Extension for Dubbo</h2>
 
     Support Dubbo api scanning and request for RestfulBox plugin from version 2.0.3.
     <br/>
@@ -13,9 +13,6 @@
     <br/>
 
     View more: <a href="https://github.com/newhoo/RESTKit-Dubbo">github</a>
-    <br/>
-
-    <img src="https://s2.loli.net/2022/03/24/GiAxra8ZP7D3tQB.png"/>
     ]]></description>
 
     <change-notes><![CDATA[
