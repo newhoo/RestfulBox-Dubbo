@@ -34,8 +34,9 @@ dependencies {
 
 intellij {
     pluginName.set('RestfulBox-Dubbo')
-    version.set('2022.3')
-    type.set("IU")
+//    version.set('2022.3')
+    version.set('2024.1')
+//    type.set("IU")
     updateSinceUntilBuild.set(false)
     downloadSources.set(true)
     plugins.set(['java', 'io.github.newhoo.restkit:3.0.0'])

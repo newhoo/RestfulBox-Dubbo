@@ -54,8 +54,8 @@ public class DubboResolver extends BaseRequestResolver {
     @Override
     public List<RestItem> findRestItemListInModule(Module module, GlobalSearchScope globalSearchScope) {
         List<RestItem> itemList = new ArrayList<>();
-        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get("Service", module.getProject(), globalSearchScope);
-        Collection<PsiAnnotation> psiAnnotations2 = JavaAnnotationIndex.getInstance().get("DubboService", module.getProject(), globalSearchScope);
+        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().getAnnotations("Service", module.getProject(), globalSearchScope);
+        Collection<PsiAnnotation> psiAnnotations2 = JavaAnnotationIndex.getInstance().getAnnotations("DubboService", module.getProject(), globalSearchScope);
         if (!psiAnnotations2.isEmpty()) {
             psiAnnotations.addAll(psiAnnotations2);
         }

@@ -1,5 +1,6 @@
 package io.github.newhoo.restkit.ext.dubbo;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -18,6 +19,11 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 public class DubboAction extends AnAction {
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return ActionUpdateThread.BGT;
+    }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
