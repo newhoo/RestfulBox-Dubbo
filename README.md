@@ -6,6 +6,10 @@
 
 If this plugin helps, please **🌟Star**! If you have any good idea, please let me know.
 
+![main.png](.images/main.png)
+
+![searcheverywhere.png](.images/searcheverywhere.png)
+
 ## Features
 - Support most RestfulBox features.
 - Support scanning dubbo services in java project.
@@ -17,11 +21,8 @@ If this plugin helps, please **🌟Star**! If you have any good idea, please let
 
 Recommended <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>find "RestfulBox-Dubbo"</kbd> > <kbd>Install Plugin</kbd>
 
-- **Local Install**
-
-Download plugin form <kbd>distributions/RESTKit-Dubbo-x.x.x.zip</kbd>, then <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Install Plugin from Disk...</kbd>
-
 ## Usage
+
 After installed this plugin, you should enable it in `RestfulBox` setting. Refresh in `RestfulBox` window.
 
 ![enable](./.images/setting.png)

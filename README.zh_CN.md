@@ -2,6 +2,10 @@
 
 本插件是[RestfulBox](https://plugins.jetbrains.com/plugin/14723-restfulbox) 的辅助插件，用于通过`RestfulBox`提供Dubbo接口的支持，功能比较完善。如果提升了你的开发效率，不妨一赞，同时也欢迎提供宝贵的建议。
 
+![main.png](.images/main.png)
+
+![searcheverywhere.png](.images/searcheverywhere.png)
+
 ## 功能
 - 支持RestfulBox的绝大多数功能。
 - 支持扫描Java项目中的dubbo服务。
@@ -13,12 +17,9 @@
 
 推荐 <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Browse repositories...</kbd> > <kbd>输入"RestfulBox-Dubbo"</kbd> > <kbd>点击Install</kbd>
 
-- **本地安装**
-
-从仓库下载<kbd>distributions/RESTKit-Dubbo-x.x.x.zip</kbd>, 然后在本地Idea安装 <kbd>Preferences(Settings)</kbd> > <kbd>Plugins</kbd> > <kbd>Install Plugin from Disk...</kbd>
-
 ## 使用
-安装完成后，在`RestfulBox`插件设置中启用，然后在`RestfulBox`窗口刷新项目接口。
+
+安装完成后，在`RestfulBox`插件中启用，然后在`RestfulBox`窗口刷新项目接口。
 
 ![enable](./.images/setting.png)
 

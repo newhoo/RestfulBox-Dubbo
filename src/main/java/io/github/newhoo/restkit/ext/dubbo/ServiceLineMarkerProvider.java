@@ -24,7 +24,7 @@ public class ServiceLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
-        if (element instanceof PsiMethod && ConfigHelper.getCommonSetting(element.getProject()).isEnableMethodLineMarker()) {
+        if (element instanceof PsiMethod && ConfigHelper.getGlobalSetting().isEnableMethodLineMarker()) {
             PsiMethod psiMethod = (PsiMethod) element;
             if (!psiMethod.hasModifierProperty(PsiModifier.PUBLIC) || psiMethod.hasModifierProperty(PsiModifier.STATIC)) {
                 return null;

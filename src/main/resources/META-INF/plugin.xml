@@ -2,21 +2,21 @@
     <id>io.github.newhoo.restkit.ext.dubbo</id>
     <name>RestfulBox-Dubbo</name>
     <!--  <version>2.0.5</version>-->
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">RestfulBox</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">huzunrong</vendor>
 
     <description><![CDATA[
     <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> Extension for Dubbo</h2>
 
-    Support Dubbo api scanning and request for RestfulBox plugin from version 2.0.3.
+    Support Dubbo api scanning and debug for RestfulBox plugin.
     <br/>
-    After installed this plugin, you should enable it in RestfulBox plugin setting.
+    支持浏览和调试 dubbo api，是RestfulBox的辅助插件。
     <br/>
 
-    View more: <a href="https://github.com/newhoo/RESTKit-Dubbo">github</a>
+    View more: <a href="https://github.com/newhoo/RestfulBox-Dubbo">github</a>
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.3
+        1.0.3-1.0.4
         <ul>
             <li>fix exception in 2024.1;</li>
         </ul>

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'io.github.newhoo.restkit.ext'
-version '1.0.3'
+version '1.0.4'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -39,7 +39,7 @@ intellij {
 //    type.set("IU")
     updateSinceUntilBuild.set(false)
     downloadSources.set(true)
-    plugins.set(['java', 'io.github.newhoo.restkit:3.0.0'])
+    plugins.set(['java', 'io.github.newhoo.restkit:3.2.0'])
     sandboxDir.set("${rootProject.rootDir}/idea-sandbox")
 }
 
