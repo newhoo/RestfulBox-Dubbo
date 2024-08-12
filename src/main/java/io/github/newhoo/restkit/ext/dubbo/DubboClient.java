@@ -11,14 +11,13 @@ import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.alibaba.fastjson.JSONObject;
 import com.intellij.openapi.project.Project;
-import io.github.newhoo.restkit.common.KV;
-import io.github.newhoo.restkit.common.Request;
-import io.github.newhoo.restkit.common.RequestInfo;
-import io.github.newhoo.restkit.common.RestClientData;
-import io.github.newhoo.restkit.common.RestItem;
-import io.github.newhoo.restkit.restful.RestClient;
-import io.github.newhoo.restkit.restful.ep.RestClientProvider;
-import io.github.newhoo.restkit.util.JsonUtils;
+import io.github.newhoo.restkit.open.RestClient;
+import io.github.newhoo.restkit.open.ep.RestClientProvider;
+import io.github.newhoo.restkit.open.model.KV;
+import io.github.newhoo.restkit.open.model.RestClientData;
+import io.github.newhoo.restkit.open.model.RestItem;
+import io.github.newhoo.restkit.open.request.Request;
+import io.github.newhoo.restkit.open.request.RequestInfo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +164,7 @@ public class DubboClient implements RestClient {
 
             DubboResponse dubboResponse = new DubboResponse();
             dubboResponse.setAttachments(RpcContext.getContext().getAttachments());
-            dubboResponse.setBody(JsonUtils.toJson(o));
+            dubboResponse.setBody(DubboUtils.toJson(o));
             RequestInfo requestInfo = new RequestInfo(request, dubboResponse, RpcContext.getContext().getUrl().toFullString(), System.currentTimeMillis() - startTs);
             AbstractRegistryFactory.destroyAll();
             return requestInfo;
@@ -202,12 +201,12 @@ public class DubboClient implements RestClient {
           .append("Remote address: ").append(requestInfo.getRemoteAddress()).append("\n")
           .append("------------------------------------\n");
 
-        sb.append("req: ").append(JsonUtils.toJson(request)).append("\n");
+        sb.append("req: ").append(DubboUtils.toJson(request)).append("\n");
 
         if (response != null) {
             sb.append("\n");
             sb.append("resp: ").append(response.getBody()).append("\n");
-            sb.append("attachments: ").append(JsonUtils.toJson(response.getAttachments()));
+            sb.append("attachments: ").append(DubboUtils.toJson(response.getAttachments()));
         }
         return sb.toString();
     }

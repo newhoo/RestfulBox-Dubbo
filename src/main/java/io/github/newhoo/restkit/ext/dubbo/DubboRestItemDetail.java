@@ -1,12 +1,13 @@
 package io.github.newhoo.restkit.ext.dubbo;
 
-import com.intellij.openapi.util.IconLoader;
-import io.github.newhoo.restkit.common.RestItem;
-import io.github.newhoo.restkit.restful.RestItemDetail;
-import io.github.newhoo.restkit.restful.ep.RestItemDetailProvider;
+import io.github.newhoo.restkit.open.RestItemDetail;
+import io.github.newhoo.restkit.open.ep.RestItemDetailProvider;
+import io.github.newhoo.restkit.open.model.RestItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static io.github.newhoo.restkit.ext.dubbo.DubboUtils.DUBBO_API_ICON;
 
 /**
  * k8s restItm detail
@@ -21,7 +22,7 @@ public class DubboRestItemDetail implements RestItemDetail {
 
     @Override
     public Icon getIcon(RestItem restItem) {
-        return IconLoader.getIcon("icons/dubbo.svg", getClass());
+        return DUBBO_API_ICON;
     }
 
     @Override

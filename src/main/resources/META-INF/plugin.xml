@@ -1,13 +1,12 @@
 <idea-plugin>
     <id>io.github.newhoo.restkit.ext.dubbo</id>
     <name>RestfulBox-Dubbo</name>
-    <!--  <version>2.0.5</version>-->
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RESTKit-Dubbo">huzunrong</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RestfulBox-Dubbo">huzunrong</vendor>
 
     <description><![CDATA[
     <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> Extension for Dubbo</h2>
 
-    Support Dubbo api scanning and debug for RestfulBox plugin.
+    Support Dubbo api scanning and debug with RestfulBox plugin.
     <br/>
     支持浏览和调试 dubbo api，是RestfulBox的辅助插件。
     <br/>
@@ -16,6 +15,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        1.0.5
+        <ul>
+            <li>Adapts to RestfulBox 5.0;</li>
+        </ul>
+
         1.0.3-1.0.4
         <ul>
             <li>fix exception in 2024.1;</li>
@@ -40,8 +44,8 @@
 
         1.0.0
         <ul>
-            <li>support Dubbo services with RESTKit plugin</li>
-            <li>通过RESTKit插件来提供对Dubbo的支持</li>
+            <li>support Dubbo services with 支持RestfulBox plugin</li>
+            <li>通过支持RestfulBox插件来提供对Dubbo的支持</li>
         </ul>
     ]]>
     </change-notes>
@@ -55,21 +59,9 @@
     <depends>com.intellij.modules.java</depends>
     <depends>io.github.newhoo.restkit</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-        <codeInsight.lineMarkerProvider language="" implementationClass="io.github.newhoo.restkit.ext.dubbo.ServiceLineMarkerProvider"/>
-    </extensions>
-
     <extensions defaultExtensionNs="io.github.newhoo.restkit">
         <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
         <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
         <restItemDetail implementation="io.github.newhoo.restkit.ext.dubbo.DubboRestItemDetail$DubboRestItemDetailProvider"/>
     </extensions>
-
-<!--    <actions>-->
-<!--        <action id="RESTKit.DubboAction" class="io.github.newhoo.restkit.ext.dubbo.DubboAction"-->
-<!--                text="Jump to Restful Service Tree" description="Jump to restful service tree">-->
-<!--            <add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
-<!--        </action>-->
-<!--    </actions>-->
 </idea-plugin>

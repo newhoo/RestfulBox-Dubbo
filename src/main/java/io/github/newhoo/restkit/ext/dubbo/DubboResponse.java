@@ -1,6 +1,6 @@
 package io.github.newhoo.restkit.ext.dubbo;
 
-import io.github.newhoo.restkit.common.Response;
+import io.github.newhoo.restkit.open.request.Response;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
