@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'io.github.newhoo.restkit.ext'
-version '1.0.5'
+version '1.0.7'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

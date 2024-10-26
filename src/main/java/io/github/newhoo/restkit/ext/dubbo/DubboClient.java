@@ -10,20 +10,24 @@ import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.alibaba.fastjson.JSONObject;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.FileTypes;
 import io.github.newhoo.restkit.open.RestClient;
 import io.github.newhoo.restkit.open.ep.RestClientProvider;
 import io.github.newhoo.restkit.open.model.KV;
 import io.github.newhoo.restkit.open.model.RestClientData;
-import io.github.newhoo.restkit.open.model.RestItem;
 import io.github.newhoo.restkit.open.request.Request;
 import io.github.newhoo.restkit.open.request.RequestInfo;
+import io.github.newhoo.restkit.open.request.Response;
+import io.github.newhoo.restkit.open.request.Status;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +48,7 @@ public class DubboClient implements RestClient {
     }
 
     @Override
-    public List<KV> getConfig(@NotNull RestItem restItem, @NotNull Project project) {
+    public @NotNull List<KV> getConfig(@NotNull String s) {
         return Arrays.asList(
                 new KV("registry", "{{registry}}"),
                 new KV("url", "{{referenceUrl}}"),
@@ -52,9 +56,18 @@ public class DubboClient implements RestClient {
         );
     }
 
+    @Override
+    public @NotNull Map<String, String> getConfigLabel() {
+        Map<String, String> map = new HashMap<>();
+        map.put("registry", "Registry: ");
+        map.put("url", "URL: ");
+        map.put("timeout", "Timeout (ms): ");
+        return map;
+    }
+
     @NotNull
     @Override
-    public Request createRequest(RestClientData restClientData, Project project) {
+    public Request createRequest(RestClientData restClientData) {
         Map<String, String> config = restClientData.getConfig();
         JSONObject jsonObject = JSONObject.parseObject(restClientData.getBody());
 
@@ -104,12 +117,31 @@ public class DubboClient implements RestClient {
 
     @NotNull
     @Override
-    public RequestInfo sendRequest(Request request, Project project) {
+    public RequestInfo sendRequest(Request request) {
         DubboRequest dubboRequest = (DubboRequest) request;
-        return invoke(dubboRequest, project);
+        return invoke(dubboRequest);
     }
 
-    private RequestInfo invoke(DubboRequest request, Project project) {
+    @Override
+    public @NotNull FileType parseResponseFileType(Response response) {
+        return ObjectUtils.defaultIfNull(FileTypeManager.getInstance().findFileTypeByName("JSON"), FileTypes.PLAIN_TEXT);
+    }
+
+    @Override
+    public void cancelRequest(@NotNull Request request) {
+
+    }
+
+    @Override
+    public @NotNull Status getResponseStatus(RequestInfo requestInfo) {
+        if (requestInfo.getResponse() == null || requestInfo.getResponse().getBody() == null) {
+            return new Status("ERROR", null, requestInfo.getTime(), null, requestInfo.getRemoteAddress(), requestInfo.getLocalAddress());
+        }
+        String status = "success";
+        return new Status(status, "success", requestInfo.getTime(), (long) requestInfo.getResponse().getBody().length(), requestInfo.getRemoteAddress(), requestInfo.getLocalAddress());
+    }
+
+    private RequestInfo invoke(DubboRequest request) {
         long startTs = System.currentTimeMillis();
 
         ApplicationConfig application = new ApplicationConfig(request.getApplicationName());
@@ -165,19 +197,19 @@ public class DubboClient implements RestClient {
             DubboResponse dubboResponse = new DubboResponse();
             dubboResponse.setAttachments(RpcContext.getContext().getAttachments());
             dubboResponse.setBody(DubboUtils.toJson(o));
-            RequestInfo requestInfo = new RequestInfo(request, dubboResponse, RpcContext.getContext().getUrl().toFullString(), System.currentTimeMillis() - startTs);
+            RequestInfo requestInfo = new RequestInfo(request, dubboResponse, System.currentTimeMillis() - startTs, RpcContext.getContext().getRemoteAddressString(), RpcContext.getContext().getLocalAddressString());
             AbstractRegistryFactory.destroyAll();
             return requestInfo;
         } catch (RpcException e) {
             RequestInfo requestInfo = new RequestInfo(request, "rpc exception code: " + e.getCode() + "\n" + e.getLocalizedMessage());
             if (RpcContext.getContext() != null && RpcContext.getContext().getUrl() != null) {
                 requestInfo.setRemoteAddress(RpcContext.getContext().getUrl().toFullString());
-                requestInfo.setCost(System.currentTimeMillis() - startTs);
+                requestInfo.setTime(System.currentTimeMillis() - startTs);
             }
             return requestInfo;
         } catch (Throwable e) {
             RequestInfo requestInfo = new RequestInfo(request, e.toString());
-            requestInfo.setCost(System.currentTimeMillis() - startTs);
+            requestInfo.setTime(System.currentTimeMillis() - startTs);
             return requestInfo;
         } finally {
             Thread.currentThread().setContextClassLoader(bakLoader);
@@ -196,7 +228,7 @@ public class DubboClient implements RestClient {
         if (response != null) {
             status = "success";
         }
-        sb.append("Status: ").append(status).append("    ").append("Time: ").append(requestInfo.getCost()).append("ms").append("\n")
+        sb.append("Status: ").append(status).append("    ").append("Time: ").append(requestInfo.getTime()).append("ms").append("\n")
           .append("Registry: ").append(request.getRegistry()).append("\n")
           .append("Remote address: ").append(requestInfo.getRemoteAddress()).append("\n")
           .append("------------------------------------\n");
@@ -224,7 +256,7 @@ public class DubboClient implements RestClient {
             status = "success";
         }
         sb.append("Status: ").append(status).append("    ")
-          .append("Time: ").append(requestInfo.getCost()).append("ms").append("    ")
+          .append("Time: ").append(requestInfo.getTime()).append("ms").append("    ")
           .append("Remote address: ").append(requestInfo.getRemoteAddress()).append("\n\n");
 
         if (request != null) {
@@ -262,7 +294,7 @@ public class DubboClient implements RestClient {
 
     public static class DubboClientProvider implements RestClientProvider {
         @Override
-        public RestClient createClient() {
+        public @NotNull RestClient createClient() {
             return new DubboClient();
         }
     }

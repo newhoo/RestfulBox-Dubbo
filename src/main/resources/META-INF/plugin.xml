@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.github.newhoo.restkit.ext.dubbo</id>
     <name>RestfulBox-Dubbo</name>
-    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RestfulBox-Dubbo">huzunrong</vendor>
+    <vendor email="huzunrong@foxmail.com" url="https://github.com/newhoo/RestfulBox-Dubbo">RestfulBox</vendor>
 
     <description><![CDATA[
     <h2><a href="https://plugins.jetbrains.com/plugin/14723-restkit">RestfulBox</a> Extension for Dubbo</h2>
@@ -15,7 +15,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.5
+        1.0.5-1.0.7
         <ul>
             <li>Adapts to RestfulBox 5.0;</li>
         </ul>
@@ -51,7 +51,7 @@
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-<!--    <idea-version since-build="212.0"/>-->
+<!--    <idea-version since-build="213.0"/>-->
     <idea-version since-build="233.6"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html on how to target different products -->

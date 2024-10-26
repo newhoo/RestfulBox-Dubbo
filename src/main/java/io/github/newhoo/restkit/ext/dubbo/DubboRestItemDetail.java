@@ -21,18 +21,13 @@ public class DubboRestItemDetail implements RestItemDetail {
     }
 
     @Override
-    public Icon getIcon(RestItem restItem) {
+    public @NotNull Icon getIcon(@NotNull RestItem restItem) {
         return DUBBO_API_ICON;
-    }
-
-    @Override
-    public @NotNull String getName(@NotNull RestItem restItem, boolean useApiDesc) {
-        return restItem.getUrl();
     }
 
     public static class DubboRestItemDetailProvider implements RestItemDetailProvider {
         @Override
-        public DubboRestItemDetail createRestItemDetail() {
+        public @NotNull DubboRestItemDetail createRestItemDetail() {
             return new DubboRestItemDetail();
         }
     }

@@ -1,8 +1,6 @@
 package io.github.newhoo.restkit.ext.dubbo;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
@@ -13,11 +11,12 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
-import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.search.GlobalSearchScope;
+import io.github.newhoo.restkit.open.LanguageResolver;
 import io.github.newhoo.restkit.open.ParamResolver;
 import io.github.newhoo.restkit.open.RequestResolver;
 import io.github.newhoo.restkit.open.common.HttpMethod;
+import io.github.newhoo.restkit.open.ep.LanguageResolverProvider;
 import io.github.newhoo.restkit.open.ep.RestfulResolverProvider;
 import io.github.newhoo.restkit.open.model.JsonStruct;
 import io.github.newhoo.restkit.open.model.KV;
@@ -25,7 +24,6 @@ import io.github.newhoo.restkit.open.model.PsiRestItem;
 import io.github.newhoo.restkit.open.model.RestItem;
 import io.github.newhoo.restkit.open.model.SimpleLineMarkerInfo;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,12 +31,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static io.github.newhoo.restkit.ext.dubbo.DubboUtils.DUBBO_API_ICON;
 
 /**
  * dubbo service scanner
@@ -56,13 +55,19 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     }
 
     @Override
-    public List<RestItem> findRestItemListInModule(Module module, GlobalSearchScope globalSearchScope) {
+    public @NotNull String getDescription() {
+        return "- 支持 Dubbo 接口扫描和在线调试，识别 @Service、@DubboService等注解<br/>- 支持 Java 语言";
+    }
+
+    @Override
+    public @NotNull List<RestItem> findRestItemListInModule(Module module, GlobalSearchScope globalSearchScope) {
         List<RestItem> itemList = new ArrayList<>();
         Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().getAnnotations("Service", module.getProject(), globalSearchScope);
         Collection<PsiAnnotation> psiAnnotations2 = JavaAnnotationIndex.getInstance().getAnnotations("DubboService", module.getProject(), globalSearchScope);
         if (!psiAnnotations2.isEmpty()) {
             psiAnnotations.addAll(psiAnnotations2);
         }
+        Set<String> filterClassQualifiedNames = getClassFilterTypes();
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
             if (!"com.alibaba.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
                     && !"org.apache.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
@@ -75,6 +80,9 @@ public class DubboResolver implements RequestResolver, ParamResolver {
 
             if (psiElement instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) psiElement;
+                if (filterClassQualifiedNames.contains(psiClass.getQualifiedName())) {
+                    return itemList;
+                }
                 List<RestItem> serviceItemList = getRequestItemList(psiClass, module);
                 itemList.addAll(serviceItemList);
             }
@@ -84,25 +92,36 @@ public class DubboResolver implements RequestResolver, ParamResolver {
 
     private List<RestItem> getRequestItemList(PsiClass psiClass, Module module) {
         List<RestItem> itemList = new ArrayList<>();
-        PsiClass superClass = null;
-        for (PsiClass aSuper : psiClass.getSupers()) {
-            if (aSuper.isInterface()) {
-                superClass = aSuper;
-                break;
-            }
-        }
+        PsiClass superClass = Arrays.stream(psiClass.getSupers()).filter(PsiClass::isInterface).findFirst().orElse(null);
         if (superClass == null) {
             return itemList;
         }
+        Optional<LanguageResolver> languageResolver = getLanguageResolver(psiClass);
+        if (languageResolver.map(l -> l.isIgnored(psiClass)).orElse(false)) {
+            return itemList;
+        }
+        String groupName = languageResolver.flatMap(l -> l.findApiGroup(superClass)).orElse(superClass.getQualifiedName());
+        Set<String> classTags = languageResolver.map(l -> l.findApiTags(psiClass)).orElse(Collections.emptySet());
         for (PsiMethod psiMethod : psiClass.getMethods()) {
             if (!psiMethod.hasModifierProperty(PsiModifier.PUBLIC)
                     || psiMethod.hasModifierProperty(PsiModifier.STATIC)
                     || psiMethod.findSuperMethods(superClass).length == 0) {
                 continue;
             }
-            PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), module.getName(), getFrameworkName(), psiMethod, this);
+            if (languageResolver.map(l -> l.isIgnored(psiMethod)).orElse(false)) {
+                continue;
+            }
+            PsiRestItem<PsiMethod> item = new PsiRestItem<>(psiMethod.getName(), HttpMethod.UNDEFINED.name(), module.getName(), getFrameworkName(), psiMethod, this);
             item.setProtocol("dubbo");
-            item.setPackageName(superClass.getQualifiedName());
+
+            String apiName = languageResolver.flatMap(l -> l.findApiName(psiMethod)).orElseGet(psiMethod::getName);
+            String description = languageResolver.flatMap(l -> l.findApiDescription(psiMethod)).orElse("");
+            Set<String> methodTags = languageResolver.map(l -> l.findApiTags(psiMethod)).orElse(Collections.emptySet());
+            item.setName(apiName);
+            item.setDescription(description);
+            item.setFolderPath(item.getModuleName(), groupName, true);
+            item.setTags(new LinkedHashSet<String>(org.apache.commons.collections.CollectionUtils.union(classTags, methodTags)));
+
             itemList.add(item);
         }
         return itemList;
@@ -174,54 +193,18 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     }
 
     @Override
-    public String buildResponseBodyJson(@NotNull PsiElement psiElement) {
-        return "";
-    }
-
-    @Override
     public JsonStruct buildRequestBodyStruct(PsiElement psiElement) {
         return null;
     }
 
     @Override
-    public JsonStruct buildResponseBodyStruct(PsiElement psiElement) {
-        return null;
+    public String buildResponseBodyJson(@NotNull PsiElement psiElement) {
+        return "";
     }
 
-    @NotNull
     @Override
-    public String buildDescription(@NotNull PsiElement psiElement) {
-        if (!(psiElement instanceof PsiMethod)) {
-            return "";
-        }
-        PsiMethod psiMethod = (PsiMethod) psiElement;
-
-        PsiClass superClass = null;
-        for (PsiClass aSuper : psiMethod.getContainingClass().getSupers()) {
-            if (aSuper.isInterface()) {
-                superClass = aSuper;
-                break;
-            }
-        }
-        if (superClass != null) {
-            for (PsiMethod superMethod : psiMethod.findSuperMethods(superClass)) {
-                String restName = null;
-                String location;
-                if (superMethod.getDocComment() != null) {
-                    restName = Arrays.stream(superMethod.getDocComment().getDescriptionElements())
-                                     .filter(e -> e instanceof PsiDocToken)
-                                     .filter(e -> StringUtils.isNotBlank(e.getText()))
-                                     .findFirst()
-                                     .map(e -> e.getText().trim()).orElse(null);
-                }
-                location = superMethod.getContainingClass().getName().concat("#").concat(superMethod.getName());
-                if (StringUtils.isNotEmpty(restName)) {
-                    location = location.concat("#").concat(restName);
-                }
-                return location;
-            }
-        }
-        return "";
+    public JsonStruct buildResponseBodyStruct(PsiElement psiElement) {
+        return null;
     }
 
     private static Object getAnnotationValue(PsiAnnotation annotation, String name) {
@@ -257,16 +240,16 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     @Override
     public SimpleLineMarkerInfo tryGenerateLineMarker(@NotNull PsiElement element) {
         if (canNavigateToTree(element)) {
-            TextRange textRange = Arrays.stream(element.getChildren())
-                                        .filter(e -> e instanceof PsiIdentifier)
-                                        .findFirst()
-                                        .map(e -> e.getTextRange())
-                                        .orElse(null);
-            if (textRange != null) {
-                SimpleLineMarkerInfo simpleLineMarkerInfo = new SimpleLineMarkerInfo(element, textRange);
-                simpleLineMarkerInfo.setIcon(DUBBO_API_ICON);
-                return simpleLineMarkerInfo;
-            }
+            return Arrays.stream(element.getChildren())
+                         .filter(e -> e instanceof PsiIdentifier)
+                         .findFirst()
+                         .map(child -> {
+                             // fix: Performance warning: LineMarker is supposed to be registered for leaf elements only. 返回 PsiIdentifier
+                             SimpleLineMarkerInfo simpleLineMarkerInfo1 = new SimpleLineMarkerInfo(child, child.getTextRange());
+                             simpleLineMarkerInfo1.setNavElementSupplier(child::getParent);
+                             return simpleLineMarkerInfo1;
+                         })
+                         .orElse(null);
         }
         return null;
     }
@@ -282,9 +265,18 @@ public class DubboResolver implements RequestResolver, ParamResolver {
         return item;
     }
 
+    public static Optional<LanguageResolver> getLanguageResolver(@NotNull PsiElement psiElement) {
+        return LanguageResolverProvider.EP_NAME.getExtensionList()
+                                               .stream()
+                                               .filter(Objects::nonNull)
+                                               .map(LanguageResolverProvider::createLanguageResolver)
+                                               .filter(languageResolver -> languageResolver.getLanguage().getID().equals(psiElement.getLanguage().getID()))
+                                               .findFirst();
+    }
+
     public static class DubboResolverProvider implements RestfulResolverProvider {
         @Override
-        public RequestResolver createRequestResolver(@NotNull Project project) {
+        public @NotNull RequestResolver createRequestResolver() {
             return new DubboResolver();
         }
     }
