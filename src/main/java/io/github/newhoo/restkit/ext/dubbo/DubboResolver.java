@@ -256,10 +256,16 @@ public class DubboResolver implements RequestResolver, ParamResolver {
 
     @Override
     public RestItem tryGenerateRestItem(@NotNull PsiElement psiElement) {
-        if (!(psiElement instanceof PsiMethod)) {
+        PsiMethod psiMethod = null;
+        if (psiElement instanceof PsiMethod) {
+            psiMethod = (PsiMethod) psiElement;
+        }
+        if (psiElement instanceof PsiIdentifier && psiElement.getParent() instanceof PsiMethod) {
+            psiMethod = (PsiMethod) psiElement.getParent();
+        }
+        if (psiMethod == null) {
             return null;
         }
-        PsiMethod psiMethod = (PsiMethod) psiElement;
         PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), "", "", psiMethod, this);
         item.setProtocol("dubbo");
         return item;

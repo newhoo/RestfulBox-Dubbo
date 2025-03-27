@@ -15,7 +15,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.5-1.0.7
+        1.0.5-1.0.8
         <ul>
             <li>Adapts to RestfulBox 5.0;</li>
         </ul>
