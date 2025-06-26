@@ -15,37 +15,9 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        1.0.5-1.0.8
+        1.0.9
         <ul>
-            <li>Adapts to RestfulBox 5.0;</li>
-        </ul>
-
-        1.0.3-1.0.4
-        <ul>
-            <li>fix exception in 2024.1;</li>
-        </ul>
-
-        1.0.2
-        <ul>
-            <li>Support DubboService annotation.</li>
-            <li>支持 DubboService 注解扫描</li>
-        </ul>
-
-        1.0.1
-        <ul>
-            <li>Add icon for Dubbo methods. Enable [Jump to tree using method line marker] in the setting.</li>
-            <li>Remove jump to tree from context menu.</li>
-            <li>Support RestfulBox 3.0.</li>
-            <br/>
-            <li>添加图标，支持Dubbo方法快速生成请求，在设置中启用【Jump to tree using method line marker】</li>
-            <li>移除右键菜单中的跳转到树窗口</li>
-            <li>支持RestfulBox 3.0.</li>
-        </ul>
-
-        1.0.0
-        <ul>
-            <li>support Dubbo services with 支持RestfulBox plugin</li>
-            <li>通过支持RestfulBox插件来提供对Dubbo的支持</li>
+            <li>Adapts to RestfulBox 6.0;</li>
         </ul>
     ]]>
     </change-notes>
@@ -57,11 +29,5 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html on how to target different products -->
     <!-- uncomment to enable plugin in all products -->
     <depends>com.intellij.modules.java</depends>
-    <depends>io.github.newhoo.restkit</depends>
-
-    <extensions defaultExtensionNs="io.github.newhoo.restkit">
-        <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
-        <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
-        <restItemDetail implementation="io.github.newhoo.restkit.ext.dubbo.DubboRestItemDetail$DubboRestItemDetailProvider"/>
-    </extensions>
+    <depends optional="true" config-file="plugin-restkit.xml">io.github.newhoo.restkit</depends>
 </idea-plugin>

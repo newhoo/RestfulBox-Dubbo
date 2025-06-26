@@ -1,42 +1,26 @@
 package io.github.newhoo.restkit.ext.dubbo;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import io.github.newhoo.restkit.open.LanguageResolver;
 import io.github.newhoo.restkit.open.ParamResolver;
 import io.github.newhoo.restkit.open.RequestResolver;
-import io.github.newhoo.restkit.open.common.HttpMethod;
-import io.github.newhoo.restkit.open.ep.LanguageResolverProvider;
 import io.github.newhoo.restkit.open.ep.RestfulResolverProvider;
-import io.github.newhoo.restkit.open.model.JsonStruct;
+import io.github.newhoo.restkit.open.helper.java.JavaHelper;
 import io.github.newhoo.restkit.open.model.KV;
-import io.github.newhoo.restkit.open.model.PsiRestItem;
-import io.github.newhoo.restkit.open.model.RestItem;
-import io.github.newhoo.restkit.open.model.SimpleLineMarkerInfo;
+import io.github.newhoo.restkit.open.model.ProjectSetting;
+import io.github.newhoo.restkit.open.model.api.HttpMethod;
+import io.github.newhoo.restkit.open.model.api.PsiRestItem;
+import io.github.newhoo.restkit.open.model.api.RestItem;
+import io.github.newhoo.restkit.open.model.api.SimpleLineMarkerInfo;
+import io.github.newhoo.restkit.open.model.api.parameter.JsonStruct;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +39,11 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     }
 
     @Override
+    public int order() {
+        return 5;
+    }
+
+    @Override
     public @NotNull String getDescription() {
         return "- 支持 Dubbo 接口扫描和在线调试，识别 @Service、@DubboService等注解<br/>- 支持 Java 语言";
     }
@@ -67,7 +56,6 @@ public class DubboResolver implements RequestResolver, ParamResolver {
         if (!psiAnnotations2.isEmpty()) {
             psiAnnotations.addAll(psiAnnotations2);
         }
-        Set<String> filterClassQualifiedNames = getClassFilterTypes();
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
             if (!"com.alibaba.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
                     && !"org.apache.dubbo.config.annotation.Service".equals(psiAnnotation.getQualifiedName())
@@ -78,11 +66,7 @@ public class DubboResolver implements RequestResolver, ParamResolver {
             PsiModifierList psiModifierList = (PsiModifierList) psiAnnotation.getParent();
             PsiElement psiElement = psiModifierList.getParent();
 
-            if (psiElement instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) psiElement;
-                if (filterClassQualifiedNames.contains(psiClass.getQualifiedName())) {
-                    return itemList;
-                }
+            if (psiElement instanceof PsiClass psiClass) {
                 List<RestItem> serviceItemList = getRequestItemList(psiClass, module);
                 itemList.addAll(serviceItemList);
             }
@@ -96,31 +80,28 @@ public class DubboResolver implements RequestResolver, ParamResolver {
         if (superClass == null) {
             return itemList;
         }
-        Optional<LanguageResolver> languageResolver = getLanguageResolver(psiClass);
-        if (languageResolver.map(l -> l.isIgnored(psiClass)).orElse(false)) {
+        LanguageResolver languageResolver = JavaHelper.getLanguageResolver(psiClass);
+        if (languageResolver.isIgnored(psiClass)) {
             return itemList;
         }
-        String groupName = languageResolver.flatMap(l -> l.findApiGroup(superClass)).orElse(superClass.getQualifiedName());
-        Set<String> classTags = languageResolver.map(l -> l.findApiTags(psiClass)).orElse(Collections.emptySet());
+        String groupName = languageResolver.findApiGroup(psiClass).orElseGet(psiClass::getQualifiedName);
+        Set<String> classTags = languageResolver.findApiTags(psiClass);
+        boolean showModuleFolder = ProjectSetting.getInstance(module.getProject()).isShowModuleFolder();
         for (PsiMethod psiMethod : psiClass.getMethods()) {
             if (!psiMethod.hasModifierProperty(PsiModifier.PUBLIC)
                     || psiMethod.hasModifierProperty(PsiModifier.STATIC)
-                    || psiMethod.findSuperMethods(superClass).length == 0) {
-                continue;
-            }
-            if (languageResolver.map(l -> l.isIgnored(psiMethod)).orElse(false)) {
+                    || psiMethod.findSuperMethods(superClass).length == 0
+                    || languageResolver.isIgnored(psiMethod)) {
                 continue;
             }
             PsiRestItem<PsiMethod> item = new PsiRestItem<>(psiMethod.getName(), HttpMethod.UNDEFINED.name(), module.getName(), getFrameworkName(), psiMethod, this);
             item.setProtocol("dubbo");
 
-            String apiName = languageResolver.flatMap(l -> l.findApiName(psiMethod)).orElseGet(psiMethod::getName);
-            String description = languageResolver.flatMap(l -> l.findApiDescription(psiMethod)).orElse("");
-            Set<String> methodTags = languageResolver.map(l -> l.findApiTags(psiMethod)).orElse(Collections.emptySet());
+            String apiName = languageResolver.findApiName(psiMethod).orElseGet(psiMethod::getName);
+            Set<String> methodTags = languageResolver.findApiTags(psiMethod);
             item.setName(apiName);
-            item.setDescription(description);
-            item.setFolderPath(item.getModuleName(), groupName, true);
-            item.setTags(new LinkedHashSet<String>(org.apache.commons.collections.CollectionUtils.union(classTags, methodTags)));
+            item.setFolderPath(item.getModuleName(), groupName, showModuleFolder);
+            item.setTags(new LinkedHashSet<String>(CollectionUtils.union(classTags, methodTags)));
 
             itemList.add(item);
         }
@@ -147,10 +128,9 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     @NotNull
     @Override
     public String buildRequestBodyJson(@NotNull PsiElement psiElement) {
-        if (!(psiElement instanceof PsiMethod)) {
+        if (!(psiElement instanceof PsiMethod psiMethod)) {
             return "";
         }
-        PsiMethod psiMethod = (PsiMethod) psiElement;
         PsiClass superClass = null;
         for (PsiClass aSuper : psiMethod.getContainingClass().getSupers()) {
             if (aSuper.isInterface()) {
@@ -198,13 +178,18 @@ public class DubboResolver implements RequestResolver, ParamResolver {
     }
 
     @Override
-    public String buildResponseBodyJson(@NotNull PsiElement psiElement) {
+    public @NotNull String buildResponseBodyJson(@NotNull PsiElement psiElement) {
         return "";
     }
 
     @Override
     public JsonStruct buildResponseBodyStruct(PsiElement psiElement) {
         return null;
+    }
+
+    @Override
+    public @NotNull String buildDescription(@NotNull PsiElement psiElement) {
+        return JavaHelper.getLanguageResolver(psiElement).findApiDescription(psiElement).orElse("");
     }
 
     private static Object getAnnotationValue(PsiAnnotation annotation, String name) {
@@ -266,18 +251,9 @@ public class DubboResolver implements RequestResolver, ParamResolver {
         if (psiMethod == null) {
             return null;
         }
-        PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), "", "", psiMethod, this);
+        PsiRestItem item = new PsiRestItem(psiMethod.getName(), HttpMethod.UNDEFINED.name(), "", psiMethod, this);
         item.setProtocol("dubbo");
         return item;
-    }
-
-    public static Optional<LanguageResolver> getLanguageResolver(@NotNull PsiElement psiElement) {
-        return LanguageResolverProvider.EP_NAME.getExtensionList()
-                                               .stream()
-                                               .filter(Objects::nonNull)
-                                               .map(LanguageResolverProvider::createLanguageResolver)
-                                               .filter(languageResolver -> languageResolver.getLanguage().getID().equals(psiElement.getLanguage().getID()))
-                                               .findFirst();
     }
 
     public static class DubboResolverProvider implements RestfulResolverProvider {

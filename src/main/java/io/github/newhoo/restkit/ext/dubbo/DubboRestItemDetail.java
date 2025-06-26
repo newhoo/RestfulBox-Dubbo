@@ -2,7 +2,7 @@ package io.github.newhoo.restkit.ext.dubbo;
 
 import io.github.newhoo.restkit.open.RestItemDetail;
 import io.github.newhoo.restkit.open.ep.RestItemDetailProvider;
-import io.github.newhoo.restkit.open.model.RestItem;
+import io.github.newhoo.restkit.open.model.api.RestItem;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

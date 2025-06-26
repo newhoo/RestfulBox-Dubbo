@@ -1,0 +1,7 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="io.github.newhoo.restkit">
+        <restfulResolver implementation="io.github.newhoo.restkit.ext.dubbo.DubboResolver$DubboResolverProvider"/>
+        <restClient implementation="io.github.newhoo.restkit.ext.dubbo.DubboClient$DubboClientProvider"/>
+        <restItemDetail implementation="io.github.newhoo.restkit.ext.dubbo.DubboRestItemDetail$DubboRestItemDetailProvider"/>
+    </extensions>
+</idea-plugin>
